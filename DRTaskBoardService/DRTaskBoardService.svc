@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="DRTaskBoardService.Service1" CodeBehind="DRTaskBoardService.svc.cs" %>

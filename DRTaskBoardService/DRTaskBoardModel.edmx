@@ -1,0 +1,494 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="DRTaskBoardModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Stage">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="Order" Type="int" />
+          <Property Name="MaxWIP" Type="int" />
+          <Property Name="TaskboardID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Tag">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Value" Type="varchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Task">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="CreationDate" Type="datetime" Nullable="false" />
+          <Property Name="CreatorID" Type="int" Nullable="false" />
+          <Property Name="Details" Type="varchar" MaxLength="2048" />
+          <Property Name="Value" Type="int" />
+          <Property Name="Priority" Type="int" />
+          <Property Name="Estimation" Type="int" />
+          <Property Name="Duration" Type="int" />
+          <Property Name="StageID" Type="int" />
+        </EntityType>
+        <EntityType Name="Task_Tag">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="TagID" Type="int" Nullable="false" />
+          <Property Name="TaskID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Taskboard">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Title" Type="varchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="Picture" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="User_Task">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="UserID" Type="int" Nullable="false" />
+          <Property Name="TaskID" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Stage_ToTaskBoard">
+          <End Role="Taskboard" Type="Self.Taskboard" Multiplicity="1" />
+          <End Role="Stage" Type="Self.Stage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Taskboard">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Stage">
+              <PropertyRef Name="TaskboardID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Task_Tag_ToTag">
+          <End Role="Tag" Type="Self.Tag" Multiplicity="1" />
+          <End Role="Task_Tag" Type="Self.Task_Tag" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tag">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Task_Tag">
+              <PropertyRef Name="TagID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Task_Tag_ToTask">
+          <End Role="Task" Type="Self.Task" Multiplicity="1" />
+          <End Role="Task_Tag" Type="Self.Task_Tag" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Task">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Task_Tag">
+              <PropertyRef Name="TaskID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Task_ToStage">
+          <End Role="Stage" Type="Self.Stage" Multiplicity="0..1" />
+          <End Role="Task" Type="Self.Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stage">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Task">
+              <PropertyRef Name="StageID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Task_ToUser">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Task" Type="Self.Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Task">
+              <PropertyRef Name="CreatorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Task_ToTask">
+          <End Role="Task" Type="Self.Task" Multiplicity="1" />
+          <End Role="User_Task" Type="Self.User_Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Task">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="User_Task">
+              <PropertyRef Name="TaskID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Task_ToUser">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="User_Task" Type="Self.User_Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="User_Task">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="DRTaskBoardModelStoreContainer">
+          <EntitySet Name="Stage" EntityType="Self.Stage" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tag" EntityType="Self.Tag" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Task" EntityType="Self.Task" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Task_Tag" EntityType="Self.Task_Tag" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Taskboard" EntityType="Self.Taskboard" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User_Task" EntityType="Self.User_Task" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Stage_ToTaskBoard" Association="Self.FK_Stage_ToTaskBoard">
+            <End Role="Taskboard" EntitySet="Taskboard" />
+            <End Role="Stage" EntitySet="Stage" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Task_Tag_ToTag" Association="Self.FK_Task_Tag_ToTag">
+            <End Role="Tag" EntitySet="Tag" />
+            <End Role="Task_Tag" EntitySet="Task_Tag" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Task_Tag_ToTask" Association="Self.FK_Task_Tag_ToTask">
+            <End Role="Task" EntitySet="Task" />
+            <End Role="Task_Tag" EntitySet="Task_Tag" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Task_ToStage" Association="Self.FK_Task_ToStage">
+            <End Role="Stage" EntitySet="Stage" />
+            <End Role="Task" EntitySet="Task" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Task_ToUser" Association="Self.FK_Task_ToUser">
+            <End Role="User" EntitySet="User" />
+            <End Role="Task" EntitySet="Task" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Task_ToTask" Association="Self.FK_User_Task_ToTask">
+            <End Role="Task" EntitySet="Task" />
+            <End Role="User_Task" EntitySet="User_Task" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Task_ToUser" Association="Self.FK_User_Task_ToUser">
+            <End Role="User" EntitySet="User" />
+            <End Role="User_Task" EntitySet="User_Task" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DRTaskBoardModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Stage">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Order" Type="Int32" />
+          <Property Name="MaxWIP" Type="Int32" />
+          <Property Name="TaskboardID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Taskboard" Relationship="Self.FK_Stage_ToTaskBoard" FromRole="Stage" ToRole="Taskboard" />
+          <NavigationProperty Name="Tasks" Relationship="Self.FK_Task_ToStage" FromRole="Stage" ToRole="Task" />
+        </EntityType>
+        <EntityType Name="Tag">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Value" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Task_Tag" Relationship="Self.FK_Task_Tag_ToTag" FromRole="Tag" ToRole="Task_Tag" />
+        </EntityType>
+        <EntityType Name="Task">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CreationDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatorID" Type="Int32" Nullable="false" />
+          <Property Name="Details" Type="String" MaxLength="2048" FixedLength="false" Unicode="false" />
+          <Property Name="Value" Type="Int32" />
+          <Property Name="Priority" Type="Int32" />
+          <Property Name="Estimation" Type="Int32" />
+          <Property Name="Duration" Type="Int32" />
+          <Property Name="StageID" Type="Int32" />
+          <NavigationProperty Name="Stage" Relationship="Self.FK_Task_ToStage" FromRole="Task" ToRole="Stage" />
+          <NavigationProperty Name="Task_Tag" Relationship="Self.FK_Task_Tag_ToTask" FromRole="Task" ToRole="Task_Tag" />
+          <NavigationProperty Name="User" Relationship="Self.FK_Task_ToUser" FromRole="Task" ToRole="User" />
+          <NavigationProperty Name="User_Task" Relationship="Self.FK_User_Task_ToTask" FromRole="Task" ToRole="User_Task" />
+        </EntityType>
+        <EntityType Name="Task_Tag">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="TagID" Type="Int32" Nullable="false" />
+          <Property Name="TaskID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Tag" Relationship="Self.FK_Task_Tag_ToTag" FromRole="Task_Tag" ToRole="Tag" />
+          <NavigationProperty Name="Task" Relationship="Self.FK_Task_Tag_ToTask" FromRole="Task_Tag" ToRole="Task" />
+        </EntityType>
+        <EntityType Name="Taskboard">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Stages" Relationship="Self.FK_Stage_ToTaskBoard" FromRole="Taskboard" ToRole="Stage" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="Tasks" Relationship="Self.FK_Task_ToUser" FromRole="User" ToRole="Task" />
+          <NavigationProperty Name="User_Task" Relationship="Self.FK_User_Task_ToUser" FromRole="User" ToRole="User_Task" />
+        </EntityType>
+        <EntityType Name="User_Task">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="TaskID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Task" Relationship="Self.FK_User_Task_ToTask" FromRole="User_Task" ToRole="Task" />
+          <NavigationProperty Name="User" Relationship="Self.FK_User_Task_ToUser" FromRole="User_Task" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_Stage_ToTaskBoard">
+          <End Role="Taskboard" Type="Self.Taskboard" Multiplicity="1" />
+          <End Role="Stage" Type="Self.Stage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Taskboard">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Stage">
+              <PropertyRef Name="TaskboardID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Task_ToStage">
+          <End Role="Stage" Type="Self.Stage" Multiplicity="0..1" />
+          <End Role="Task" Type="Self.Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Stage">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Task">
+              <PropertyRef Name="StageID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Task_Tag_ToTag">
+          <End Role="Tag" Type="Self.Tag" Multiplicity="1" />
+          <End Role="Task_Tag" Type="Self.Task_Tag" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tag">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Task_Tag">
+              <PropertyRef Name="TagID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Task_Tag_ToTask">
+          <End Role="Task" Type="Self.Task" Multiplicity="1" />
+          <End Role="Task_Tag" Type="Self.Task_Tag" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Task">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Task_Tag">
+              <PropertyRef Name="TaskID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Task_ToUser">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="Task" Type="Self.Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Task">
+              <PropertyRef Name="CreatorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Task_ToTask">
+          <End Role="Task" Type="Self.Task" Multiplicity="1" />
+          <End Role="User_Task" Type="Self.User_Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Task">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="User_Task">
+              <PropertyRef Name="TaskID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_User_Task_ToUser">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="User_Task" Type="Self.User_Task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="User_Task">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="DRTaskBoardEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Stages" EntityType="Self.Stage" />
+          <EntitySet Name="Tags" EntityType="Self.Tag" />
+          <EntitySet Name="Tasks" EntityType="Self.Task" />
+          <EntitySet Name="Task_Tag" EntityType="Self.Task_Tag" />
+          <EntitySet Name="Taskboards" EntityType="Self.Taskboard" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="User_Task" EntityType="Self.User_Task" />
+          <AssociationSet Name="FK_Stage_ToTaskBoard" Association="Self.FK_Stage_ToTaskBoard">
+            <End Role="Taskboard" EntitySet="Taskboards" />
+            <End Role="Stage" EntitySet="Stages" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Task_ToStage" Association="Self.FK_Task_ToStage">
+            <End Role="Stage" EntitySet="Stages" />
+            <End Role="Task" EntitySet="Tasks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Task_Tag_ToTag" Association="Self.FK_Task_Tag_ToTag">
+            <End Role="Tag" EntitySet="Tags" />
+            <End Role="Task_Tag" EntitySet="Task_Tag" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Task_Tag_ToTask" Association="Self.FK_Task_Tag_ToTask">
+            <End Role="Task" EntitySet="Tasks" />
+            <End Role="Task_Tag" EntitySet="Task_Tag" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Task_ToUser" Association="Self.FK_Task_ToUser">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Task" EntitySet="Tasks" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Task_ToTask" Association="Self.FK_User_Task_ToTask">
+            <End Role="Task" EntitySet="Tasks" />
+            <End Role="User_Task" EntitySet="User_Task" />
+          </AssociationSet>
+          <AssociationSet Name="FK_User_Task_ToUser" Association="Self.FK_User_Task_ToUser">
+            <End Role="User" EntitySet="Users" />
+            <End Role="User_Task" EntitySet="User_Task" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DRTaskBoardModelStoreContainer" CdmEntityContainer="DRTaskBoardEntities">
+          <EntitySetMapping Name="Stages">
+            <EntityTypeMapping TypeName="DRTaskBoardModel.Stage">
+              <MappingFragment StoreEntitySet="Stage">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="MaxWIP" ColumnName="MaxWIP" />
+                <ScalarProperty Name="TaskboardID" ColumnName="TaskboardID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tags">
+            <EntityTypeMapping TypeName="DRTaskBoardModel.Tag">
+              <MappingFragment StoreEntitySet="Tag">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tasks">
+            <EntityTypeMapping TypeName="DRTaskBoardModel.Task">
+              <MappingFragment StoreEntitySet="Task">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="CreationDate" ColumnName="CreationDate" />
+                <ScalarProperty Name="CreatorID" ColumnName="CreatorID" />
+                <ScalarProperty Name="Details" ColumnName="Details" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Priority" ColumnName="Priority" />
+                <ScalarProperty Name="Estimation" ColumnName="Estimation" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="StageID" ColumnName="StageID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Task_Tag">
+            <EntityTypeMapping TypeName="DRTaskBoardModel.Task_Tag">
+              <MappingFragment StoreEntitySet="Task_Tag">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="TagID" ColumnName="TagID" />
+                <ScalarProperty Name="TaskID" ColumnName="TaskID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Taskboards">
+            <EntityTypeMapping TypeName="DRTaskBoardModel.Taskboard">
+              <MappingFragment StoreEntitySet="Taskboard">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="DRTaskBoardModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User_Task">
+            <EntityTypeMapping TypeName="DRTaskBoardModel.User_Task">
+              <MappingFragment StoreEntitySet="User_Task">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="TaskID" ColumnName="TaskID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Kein" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
