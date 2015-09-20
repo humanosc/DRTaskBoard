@@ -94,6 +94,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Doc\DRTaskBoard.vpp" />
+    <None Include="Planing\Epic_List.xlsx" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
